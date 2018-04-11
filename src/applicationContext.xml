@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop.xsd
+    http://www.springframework.org/schema/tx 
+    http://www.springframework.org/schema/tx/spring-tx.xsd">
+    
+    <!-- 连接数据库 -->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+    	<property name="driverClass" value="com.mysql.jdbc.Driver"/>
+    	<property name="jdbcUrl" value="jdbc:mysql:///_crm"/>
+    	<property name="user" value="root"/>
+    	<property name="password" value="root"/>
+    </bean>
+    
+    <!-- 配置 spring 整合orm框架-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+    	<!-- 引入数据库连接 -->
+    	<property name="dataSource" ref="dataSource"/>
+    	<!-- 可选参数 与方言-->
+    	<property name="hibernateProperties">
+    		<props>
+    			<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+    			<prop key="hibernate.show_sql">true</prop>
+    			<prop key="hibernate.format_sql">true</prop>
+    			<prop key="hibernate.hbm2ddl.auto">update</prop>
+    		</props>
+    	</property>
+    	<!-- 引入映射文件 -->
+    	<property name="mappingResources">
+    		<list>
+    			<value>com/ithc/bean/User.hbm.xml</value>
+    			<value>com/ithc/bean/Customer.hbm.xml</value>
+    			<value>com/ithc/bean/Dict.hbm.xml</value>
+    			<value>com/ithc/bean/Visit.hbm.xml</value>
+    			<value>com/ithc/bean/Linkman.hbm.xml</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <!-- 配置事物管理平台 -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <!-- 开启事物注解扫描 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    
+    <!-- 用户 -->
+    <!-- web -->
+    <bean id="userAction" class="com.ithc.web.UserAction" scope="prototype">
+    	<property name="userService" ref="userService"/>
+    </bean>
+    <!-- service -->
+    <bean id="userService" class="com.ithc.service.UserServiceImpl">
+    	<property name="userDao" ref="userDao"/>
+    </bean>
+    <!-- dao -->
+   	 <bean id="userDao" class="com.ithc.dao.UserDaoImpl">
+   	 	<property name="sessionFactory" ref="sessionFactory"/>
+   	 </bean>
+    
+    <!-- 客户 -->
+    <!-- web -->
+    <bean id="customerAction" class="com.ithc.web.CustomerAction" scope="prototype">
+    	<property name="customerService" ref="customerService"/>
+    </bean>
+    <!-- service -->
+	<bean id="customerService" class="com.ithc.service.CustomerServiceImpl">
+		<property name="customerDao" ref="customerDao"/>
+	</bean>    
+    <!-- dao -->
+    <bean id="customerDao" class="com.ithc.dao.CustomerDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <!-- 配置数据字典 -->
+    <!-- web -->
+    <bean id="dictAction" class="com.ithc.web.DictAction" scope="prototype">
+    	<property name="dictService" ref="dictService"/>
+    </bean>
+    <!-- service -->
+    <bean id="dictService" class="com.ithc.service.DictServiceImpl">
+    	<property name="dictDao" ref="dictDao"/>
+    </bean>
+    <bean id="dictDao" class="com.ithc.dao.DictDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <!-- 联系人模块 -->
+    <!-- web -->
+    <bean id="linkmanAction" class="com.ithc.web.LinkmanAction" scope="prototype">
+    	<property name="linkmanService" ref="linkmanService"/>
+    
+    </bean>
+    
+    <!-- service -->
+    <bean id="linkmanService" class="com.ithc.service.LinkmanServiceImpl">
+    	<property name="linkmanDao" ref="linkmanDao"/>
+    </bean>
+    
+    <!-- dao -->
+    <bean id="linkmanDao" class="com.ithc.dao.LinkmanDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+    <!-- 客户拜访 -->
+    <!-- web -->
+    <bean id="visitAction" class="com.ithc.web.VisitAction" scope="prototype">
+    	<property name="visitService" ref="visitService"/>
+    </bean>
+    
+    <!-- service -->
+    <bean id="visitService" class="com.ithc.service.VisitServiceImpl">
+    	<property name="visitDao" ref="visitDao"/>
+    </bean>
+    
+    <!-- dao -->
+    <bean id="visitDao" class="com.ithc.dao.VisitDaoImpl">
+    	<property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    
+</beans>
