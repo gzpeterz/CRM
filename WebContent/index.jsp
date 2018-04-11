@@ -17,7 +17,7 @@
 		<FRAME name=main src="${ pageContext.request.contextPath }/welcome.jsp" frameBorder=0>
 	</FRAMESET>
 	<NOFRAMES>
-		<p>This page requires frames, but your browser does not support
+		<p>This page  zhangwen  requires frames, but your browser does not support
 			them.</p>
 	</NOFRAMES>
 </FRAMESET>
